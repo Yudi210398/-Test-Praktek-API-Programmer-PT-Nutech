@@ -1,11 +1,11 @@
 import { body } from "express-validator";
 
 import express from "express";
-import { getProfile, postUser } from "../controller/membership.js";
+import { postUser } from "../controller/membership.js";
 
 const routerMembership = express.Router();
 
-routerMembership.get(
+routerMembership.post(
   "/registration",
   [
     body("email")
@@ -15,13 +15,23 @@ routerMembership.get(
       .withMessage("Paramter email tidak sesuai format")
       .toLowerCase()
       .trim(),
+
     body("first_name")
       .notEmpty()
-      .withMessage("Paramter email tidak sesuai format")
-      .toLowerCase()
+      .withMessage("Paramter first name harus diisi")
+      .trim(),
+
+    body("last_name")
+      .notEmpty()
+      .withMessage("Paramter last name harus diisi")
+      .trim(),
+
+    body("password")
+      .isLength({ min: 8 })
+      .withMessage("Panjang Password minimal 8 karakter")
       .trim(),
   ],
-  postUser
+  postUser,
 );
 
 export default routerMembership;
