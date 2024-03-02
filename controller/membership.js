@@ -130,7 +130,6 @@ export const updateProfile = async (req, res, next) => {
 
 export const updateProfileImage = async (req, res, next) => {
   try {
-    console.log(req.file, `cak`);
     const getData = await shemaMembership.find();
     const filterData = getData.filter(
       (data) => data.email === req.userData.email
