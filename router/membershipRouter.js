@@ -1,37 +1,38 @@
-import { body } from "express-validator";
-
 import express from "express";
-import { postUser } from "../controller/membership.js";
+import {
+  getProfile,
+  loginUser,
+  postUser,
+  updateProfile,
+  updateProfileImage,
+} from "../controller/membership.js";
+import {
+  validasiDataUser,
+  validasiDataUserUpdate,
+} from "../func/validasiData.js";
+import { jsonVerify } from "../middleware/json-verrify.js";
+import { singleUploadMiddleware } from "../func/multer.js";
 
 const routerMembership = express.Router();
 
-routerMembership.post(
-  "/registration",
-  [
-    body("email")
-      .notEmpty()
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("Paramter email tidak sesuai format")
-      .toLowerCase()
-      .trim(),
+routerMembership.post("/registration", validasiDataUser(false), postUser);
 
-    body("first_name")
-      .notEmpty()
-      .withMessage("Paramter first name harus diisi")
-      .trim(),
+routerMembership.post("/login", validasiDataUser(true), loginUser);
 
-    body("last_name")
-      .notEmpty()
-      .withMessage("Paramter last name harus diisi")
-      .trim(),
+routerMembership.get("/profile", jsonVerify, getProfile);
 
-    body("password")
-      .isLength({ min: 8 })
-      .withMessage("Panjang Password minimal 8 karakter")
-      .trim(),
-  ],
-  postUser,
+routerMembership.put(
+  "/profile/update",
+  validasiDataUserUpdate(),
+  jsonVerify,
+  updateProfile
+);
+
+routerMembership.put(
+  "/profile/image",
+  singleUploadMiddleware,
+  jsonVerify,
+  updateProfileImage
 );
 
 export default routerMembership;
